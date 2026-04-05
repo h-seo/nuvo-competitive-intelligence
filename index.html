@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuvo Competitive Intelligence Hub</title>
+<style>
+  :root {
+    --nuvo-blue: #1a56db;
+    --nuvo-dark: #111827;
+    --nuvo-gray: #374151;
+    --nuvo-light: #f9fafb;
+    --nuvo-green: #059669;
+    --nuvo-red: #dc2626;
+    --nuvo-yellow: #d97706;
+    --nuvo-purple: #7c3aed;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.06);
+    --card-shadow-hover: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--nuvo-light);
+    color: var(--nuvo-dark);
+    line-height: 1.6;
+  }
+
+  .header {
+    background: linear-gradient(135deg, var(--nuvo-dark) 0%, #1e3a5f 100%);
+    color: white;
+    padding: 32px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .header h1 { font-size: 24px; font-weight: 700; }
+  .header p { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+  .header-meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  .nav {
+    display: flex;
+    gap: 4px;
+    padding: 12px 40px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 100px;
+    z-index: 99;
+    flex-wrap: wrap;
+  }
+  .nav-btn {
+    padding: 8px 16px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--nuvo-gray);
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { border-color: var(--nuvo-blue); color: var(--nuvo-blue); }
+  .nav-btn.active { background: var(--nuvo-blue); color: white; border-color: var(--nuvo-blue); }
+
+  .main { padding: 24px 40px; max-width: 1400px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label { font-size: 13px; font-weight: 600; color: var(--nuvo-gray); }
+  .filter-chip {
+    padding: 6px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s;
+  }
+  .filter-chip:hover { border-color: var(--nuvo-blue); }
+  .filter-chip.active { background: #eff6ff; border-color: var(--nuvo-blue); color: var(--nuvo-blue); }
+
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 20px;
+  }
+  .competitor-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.2s;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+  }
+  .competitor-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-2px); }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .card-header h3 { font-size: 18px; font-weight: 700; }
+  .threat-badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .threat-high { background: #fef2f2; color: var(--nuvo-red); }
+  .threat-medium { background: #fffbeb; color: var(--nuvo-yellow); }
+  .threat-low { background: #f0fdf4; color: var(--nuvo-green); }
+  .card-type {
+    font-size: 12px;
+    color: var(--nuvo-purple);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .card-desc { font-size: 13px; color: #6b7280; margin-bottom: 12px; }
+  .card-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  .card-meta-item {
+    padding: 6px 10px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid #f3f4f6;
+  }
+  .card-meta-label { color: #9ca3af; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+  .card-meta-value { color: var(--nuvo-gray); margin-top: 2px; }
+  .card-customers {
+    font-size: 12px;
+    color: #6b7280;
+    padding: 8px 10px;
+    background: #f9fafb;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    border: 1px solid #f3f4f6;
+  }
+  .card-customers .card-meta-label { display: block; margin-bottom: 3px; }
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .card-tag {
+    padding: 2px 8px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--nuvo-gray);
+  }
+  .win-rate-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .wr-high { background: #f0fdf4; color: var(--nuvo-green); }
+  .wr-medium { background: #fffbeb; color: var(--nuvo-yellow); }
+  .wr-low { background: #fef2f2; color: var(--nuvo-red); }
+  .wr-unknown { background: #f3f4f6; color: #9ca3af; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 16px;
+    max-width: 900px;
+    width: 100%;
+    padding: 0;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    margin: auto;
+  }
+  .modal-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h2 { font-size: 22px; }
+  .modal-close {
+    width: 36px; height: 36px;
+    border: none;
+    background: #f3f4f6;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-body { padding: 32px; }
+
+  .battlecard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .battlecard-section {
+    padding: 16px;
+    border-radius: 8px;
+  }
+  .bc-landmines { background: #fffbeb; border: 1px solid #fde68a; }
+  .bc-talk-track { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .bc-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .bc-landmines .bc-section-title { color: var(--nuvo-yellow); }
+  .bc-talk-track .bc-section-title { color: var(--nuvo-blue); }
+  .bc-item {
+    font-size: 13px;
+    padding: 4px 0;
+    color: var(--nuvo-gray);
+  }
+  .bc-item::before { margin-right: 6px; }
+  .bc-landmines .bc-item::before { content: "\26A0"; }
+  .bc-talk-track .bc-item::before { content: "\2192"; color: var(--nuvo-blue); }
+
+  .bc-full-width {
+    grid-column: 1 / -1;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+  .bc-full-width h4 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--nuvo-gray);
+    margin-bottom: 8px;
+  }
+
+  /* News Timeline */
+  .news-timeline {
+    margin-top: 12px;
+    padding-left: 16px;
+    border-left: 3px solid var(--nuvo-blue);
+  }
+  .news-item {
+    padding: 12px 0;
+    padding-left: 16px;
+    border-left: 2px solid #e5e7eb;
+    margin-left: -19px;
+    position: relative;
+  }
+  .news-item::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 14px;
+    width: 12px;
+    height: 12px;
+    background: var(--nuvo-blue);
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 1px var(--nuvo-blue);
+  }
+  .news-date {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .news-text {
+    font-size: 13px;
+    color: var(--nuvo-gray);
+  }
+
+  /* HR Trends */
+  .hr-trends-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .hr-trend-item {
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+  }
+  .hr-trend-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 4px;
+  }
+  .hr-trend-value {
+    font-size: 13px;
+    color: var(--nuvo-gray);
+    font-weight: 600;
+  }
+  .hr-trend-indicator {
+    font-size: 12px;
+    color: var(--nuvo-blue);
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  /* Customer Reviews */
+  .reviews-summary {
+    padding: 16px;
+    background: #eff6ff;
+    border-radius: 8px;
+    border-left: 4px solid var(--nuvo-blue);
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--nuvo-gray);
+    line-height: 1.5;
+  }
+  .review-quotes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .review-quote {
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    border-left: 3px solid var(--nuvo-purple);
+    font-size: 13px;
+    color: var(--nuvo-gray);
+  }
+  .review-quote-text {
+    font-style: italic;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .info-box {
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+  .info-box-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #9ca3af; margin-bottom: 4px; }
+  .info-box-value { font-size: 13px; color: var(--nuvo-gray); }
+
+  /* Win/Loss Matrix */
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    font-size: 13px;
+  }
+  .matrix-table th {
+    background: var(--nuvo-dark);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .matrix-table td { padding: 12px 16px; border-bottom: 1px solid #e5e7eb; }
+  .matrix-table tr:hover td { background: #f9fafb; }
+  .win-cell { color: var(--nuvo-green); font-weight: 600; }
+  .loss-cell { color: var(--nuvo-red); font-weight: 600; }
+  .neutral-cell { color: var(--nuvo-yellow); font-weight: 600; }
+
+  /* System Section */
+  .system-card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid #e5e7eb;
+    margin-bottom: 20px;
+  }
+  .system-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+  .system-card p { font-size: 14px; color: #6b7280; margin-bottom: 16px; }
+
+  .pipeline-diagram {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .pipeline-step {
+    flex: 1;
+    padding: 16px;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+    min-width: 160px;
+  }
+  .pipeline-step::after {
+    content: "\2192";
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #d1d5db;
+    z-index: 1;
+  }
+  .pipeline-step:last-child::after { display: none; }
+  .pipeline-step h4 { font-size: 13px; font-weight: 700; color: var(--nuvo-blue); }
+  .pipeline-step p { font-size: 11px; color: #6b7280; margin-top: 4px; }
+  .pipeline-step .freq { font-size: 10px; color: var(--nuvo-purple); font-weight: 600; margin-top: 6px; }
+
+  .tech-stack {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .tech-item {
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+  }
+  .tech-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .tech-item p { font-size: 12px; color: #6b7280; }
+  .tech-item .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #eff6ff;
+    color: var(--nuvo-blue);
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  .quick-ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .quick-ref-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    border-left: 4px solid var(--nuvo-blue);
+  }
+  .quick-ref-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .quick-ref-card .killer-line {
+    font-size: 14px;
+    color: var(--nuvo-blue);
+    font-weight: 600;
+    font-style: italic;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: #eff6ff;
+    border-radius: 6px;
+  }
+  .quick-ref-card ul { list-style: none; padding: 0; }
+  .quick-ref-card li { font-size: 13px; padding: 3px 0; color: var(--nuvo-gray); }
+  .quick-ref-card li::before { content: "\2022"; color: var(--nuvo-blue); margin-right: 8px; font-weight: bold; }
+
+  .landscape-container {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+  }
+  .landscape-container h3 { font-size: 18px; margin-bottom: 16px; }
+
+  .quadrant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .quadrant {
+    padding: 20px;
+    background: white;
+  }
+  .quadrant h4 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .q-direct h4 { color: var(--nuvo-red); }
+  .q-adjacent h4 { color: var(--nuvo-yellow); }
+  .q-data h4 { color: var(--nuvo-purple); }
+  .q-legacy h4 { color: var(--nuvo-gray); }
+  .quadrant ul { list-style: none; padding: 0; }
+  .quadrant li { font-size: 13px; padding: 4px 0; }
+
+  .search-bar {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-bar:focus { border-color: var(--nuvo-blue); }
+
+  .log-entry {
+    padding: 12px 16px;
+    border-left: 3px solid var(--nuvo-blue);
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 0 8px 8px 0;
+    box-shadow: var(--card-shadow);
+  }
+  .log-entry .log-date { font-size: 11px; color: #9ca3af; }
+  .log-entry .log-text { font-size: 13px; color: var(--nuvo-gray); margin-top: 2px; }
+  .log-entry .log-source { font-size: 11px; color: var(--nuvo-purple); margin-top: 4px; }
+
+  @media (max-width: 768px) {
+    .header, .nav, .main { padding-left: 16px; padding-right: 16px; }
+    .competitor-grid { grid-template-columns: 1fr; }
+    .battlecard-grid { grid-template-columns: 1fr; }
+    .quadrant-grid { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+    .card-meta-grid { grid-template-columns: 1fr; }
+    .hr-trends-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Nuvo Competitive Intelligence Hub</h1>
+  <p>Living competitive resource for Sales & Marketing teams</p>
+  <div class="header-meta">
+    <span>Last Updated: <span id="lastUpdated"></span></span>
+    <span>|</span>
+    <span>9 Competitors Tracked</span>
+    <span>|</span>
+    <span>6 Verticals Covered</span>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showSection('landscape')">Landscape Overview</button>
+  <button class="nav-btn" onclick="showSection('competitors')">Competitor Profiles</button>
+  <button class="nav-btn" onclick="showSection('battlecards')">Sales Battlecards</button>
+  <button class="nav-btn" onclick="showSection('matrix')">Win/Loss Matrix</button>
+  <button class="nav-btn" onclick="showSection('system')">Update System</button>
+  <button class="nav-btn" onclick="showSection('changelog')">Change Log</button>
+</div>
+
+<div class="main">
+
+  <!-- LANDSCAPE OVERVIEW -->
+  <div id="landscape" class="section active">
+    <div class="landscape-container">
+      <h3>Competitive Landscape Map</h3>
+      <p style="font-size:14px; color:#6b7280; margin-bottom:16px;">Nuvo sits at the intersection of B2B trade networking, credit management, and customer onboarding. Competitors cluster into four groups depending on breadth of offering and whether they operate as a network or a single-player SaaS tool.</p>
+      <div class="quadrant-grid">
+        <div class="quadrant q-direct">
+          <h4>Direct Competitors -- Credit & Onboarding Platforms</h4>
+          <ul>
+            <li><strong>Bectran</strong> -- Full O2C credit management SaaS; 4,000+ orgs</li>
+            <li><strong>HighRadius</strong> -- Enterprise-grade Credit Cloud with AI decisioning</li>
+            <li><strong>Credit Pulse</strong> -- AI-first credit risk for distributors & manufacturers</li>
+          </ul>
+        </div>
+        <div class="quadrant q-adjacent">
+          <h4>Adjacent -- Net Terms & Trade Credit Financing</h4>
+          <ul>
+            <li><strong>Apruve / TreviPay</strong> -- Embedded B2B trade credit & BNPL in 40+ countries</li>
+            <li><strong>Resolve</strong> -- Net terms + upfront payment for manufacturers & wholesalers</li>
+          </ul>
+        </div>
+        <div class="quadrant q-data">
+          <h4>Adjacent -- AR Automation & Order-to-Cash</h4>
+          <ul>
+            <li><strong>Billtrust</strong> -- AI-powered full-cycle AR automation</li>
+            <li><strong>Sidetrade</strong> -- AI O2C platform with 24 years of B2B buyer data</li>
+          </ul>
+        </div>
+        <div class="quadrant q-legacy">
+          <h4>Adjacent -- Credit Data & Legacy Alternatives</h4>
+          <ul>
+            <li><strong>Dun & Bradstreet</strong> -- World's largest business credit data set</li>
+            <li><strong>Manual processes</strong> -- Faxes, spreadsheets, phone-based credit checks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="landscape-container">
+      <h3>Nuvo's Core Differentiator: The Network Effect</h3>
+      <p style="font-size:14px; color:#6b7280;">Unlike every other competitor, Nuvo is not a single-player SaaS tool -- it is a <strong>trade network</strong>. Each new business that joins brings its buyers and suppliers, creating compounding data and trust signals. This is the strategic moat that sales should anchor on in every conversation.</p>
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; margin-top:16px;">
+        <div style="padding:16px; background:#f0fdf4; border-radius:8px; border:1px solid #bbf7d0; text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:var(--nuvo-green);">50,000+</div>
+          <div style="font-size:12px; color:#6b7280;">Businesses on the network</div>
+        </div>
+        <div style="padding:16px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:var(--nuvo-blue);">6x</div>
+          <div style="font-size:12px; color:#6b7280;">YoY business growth</div>
+        </div>
+        <div style="padding:16px; background:#faf5ff; border-radius:8px; border:1px solid #e9d5ff; text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:var(--nuvo-purple);">$45M</div>
+          <div style="font-size:12px; color:#6b7280;">Series A (Sequoia, Spark)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPETITOR PROFILES -->
+  <div id="competitors" class="section">
+    <input type="text" class="search-bar" placeholder="Search competitors by name, category, vertical, or customer..." oninput="filterCompetitors(this.value)">
+    <div class="filters">
+      <span class="filter-label">Category:</span>
+      <button class="filter-chip active" onclick="filterByCategory('all', this)">All</button>
+      <button class="filter-chip" onclick="filterByCategory('direct', this)">Direct</button>
+      <button class="filter-chip" onclick="filterByCategory('net-terms', this)">Net Terms</button>
+      <button class="filter-chip" onclick="filterByCategory('ar-otc', this)">AR / O2C</button>
+      <button class="filter-chip" onclick="filterByCategory('data', this)">Data / Legacy</button>
+    </div>
+    <div class="competitor-grid" id="competitorGrid"></div>
+  </div>
+
+  <!-- SALES BATTLECARDS -->
+  <div id="battlecards" class="section">
+    <p style="font-size:14px; color:#6b7280; margin-bottom:20px;">Click any competitor to open their full battlecard. Designed for quick reference mid-deal. Win/loss details are covered in the Win/Loss Matrix tab.</p>
+    <div class="quick-ref-grid" id="battlecardGrid"></div>
+  </div>
+
+  <!-- WIN/LOSS MATRIX -->
+  <div id="matrix" class="section">
+    <div class="landscape-container">
+      <h3>Win/Loss Analysis by Dimension</h3>
+      <p style="font-size:14px; color:#6b7280; margin-bottom:20px;">How Nuvo stacks up against each competitor across key deal dimensions. Green = Nuvo advantage. Red = Competitor advantage. Yellow = Depends on context.</p>
+      <div style="overflow-x:auto;">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Competitor</th>
+              <th>SMB (&lt;$50M rev)</th>
+              <th>Mid-Market</th>
+              <th>Enterprise</th>
+              <th>Speed to Deploy</th>
+              <th>Network Effects</th>
+              <th>Pricing</th>
+              <th>Vertical Depth</th>
+              <th>Credit Data Richness</th>
+            </tr>
+          </thead>
+          <tbody id="matrixBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="landscape-container">
+      <h3>Win/Loss by Vertical</h3>
+      <p style="font-size:14px; color:#6b7280; margin-bottom:20px;">Nuvo's competitive position varies significantly by industry vertical.</p>
+      <div style="overflow-x:auto;">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Vertical</th>
+              <th>Nuvo Strength</th>
+              <th>Primary Threat</th>
+              <th>Win Rate Outlook</th>
+              <th>Key Talking Point</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Alcohol & Beverage</strong></td>
+              <td class="win-cell">Very Strong</td>
+              <td>Bectran, Manual</td>
+              <td class="win-cell">High</td>
+              <td style="font-size:12px;">Complex licensing & compliance verification built in; Southern Glazer's is a reference customer</td>
+            </tr>
+            <tr>
+              <td><strong>Building Materials</strong></td>
+              <td class="win-cell">Strong</td>
+              <td>Credit Pulse, Bectran</td>
+              <td class="win-cell">High</td>
+              <td style="font-size:12px;">Great Dane as reference; fraud detection critical in high-ticket material sales</td>
+            </tr>
+            <tr>
+              <td><strong>Food Service</strong></td>
+              <td class="win-cell">Strong</td>
+              <td>Bectran, HighRadius</td>
+              <td class="neutral-cell">Medium-High</td>
+              <td style="font-size:12px;">Speed of onboarding is decisive -- restaurants need to order quickly</td>
+            </tr>
+            <tr>
+              <td><strong>Manufacturing</strong></td>
+              <td class="neutral-cell">Moderate</td>
+              <td>HighRadius, Credit Pulse</td>
+              <td class="neutral-cell">Medium</td>
+              <td style="font-size:12px;">Larger manufacturers may want ERP integration depth that HighRadius offers</td>
+            </tr>
+            <tr>
+              <td><strong>Distribution (General)</strong></td>
+              <td class="neutral-cell">Moderate</td>
+              <td>Bectran, Billtrust</td>
+              <td class="neutral-cell">Medium</td>
+              <td style="font-size:12px;">Network effect matters here -- more partners on Nuvo = faster onboarding for distributors</td>
+            </tr>
+            <tr>
+              <td><strong>Chemicals</strong></td>
+              <td class="win-cell">Strong</td>
+              <td>Manual, D&B</td>
+              <td class="win-cell">High</td>
+              <td style="font-size:12px;">Compliance-heavy industry where Nuvo's verification suite shines</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="landscape-container">
+      <h3>Win/Loss by Persona</h3>
+      <div style="overflow-x:auto;">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Buyer Persona</th>
+              <th>What They Care About</th>
+              <th>Nuvo Strength</th>
+              <th>Risk / Objection</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Credit Manager</strong></td>
+              <td style="font-size:12px;">Speed of credit decisions, risk accuracy, portfolio visibility</td>
+              <td class="win-cell">Strong -- real-time risk + Plaid integration for bank verification</td>
+              <td style="font-size:12px;">May want deeper credit scoring models (HighRadius, Credit Pulse)</td>
+            </tr>
+            <tr>
+              <td><strong>CFO / VP Finance</strong></td>
+              <td style="font-size:12px;">DSO reduction, bad debt, ROI</td>
+              <td class="neutral-cell">Moderate -- strong onboarding ROI story, but less AR depth than Billtrust</td>
+              <td style="font-size:12px;">May want full O2C suite, not just onboarding</td>
+            </tr>
+            <tr>
+              <td><strong>Sales / Revenue Leader</strong></td>
+              <td style="font-size:12px;">Speed to close, customer experience, fewer friction points</td>
+              <td class="win-cell">Very Strong -- network-enabled onboarding removes friction</td>
+              <td style="font-size:12px;">May not be the primary budget holder</td>
+            </tr>
+            <tr>
+              <td><strong>Operations / Supply Chain</strong></td>
+              <td style="font-size:12px;">Partner verification, compliance, fraud prevention</td>
+              <td class="win-cell">Strong -- Nuvo's verification and fraud detection are best-in-class for the SMB/mid-market</td>
+              <td style="font-size:12px;">Enterprise ops teams may default to D&B data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATE SYSTEM -->
+  <div id="system" class="section">
+    <div class="system-card">
+      <h3>Automated Competitive Intelligence Pipeline</h3>
+      <p>This system is designed to keep competitive intelligence fresh with minimal manual effort. It combines automated data collection with human-in-the-loop curation on a defined cadence.</p>
+      <div class="pipeline-diagram">
+        <div class="pipeline-step">
+          <h4>1. Collect</h4>
+          <p>Automated scraping & monitoring of competitor signals</p>
+          <div class="freq">Continuous</div>
+        </div>
+        <div class="pipeline-step">
+          <h4>2. Aggregate</h4>
+          <p>Normalize & store in central database</p>
+          <div class="freq">Daily</div>
+        </div>
+        <div class="pipeline-step">
+          <h4>3. Analyze</h4>
+          <p>AI-assisted diffing & insight generation</p>
+          <div class="freq">Weekly</div>
+        </div>
+        <div class="pipeline-step">
+          <h4>4. Distribute</h4>
+          <p>Push alerts to Slack, update battlecards</p>
+          <div class="freq">Real-time + Weekly</div>
+        </div>
+        <div class="pipeline-step">
+          <h4>5. Validate</h4>
+          <p>Human review & win/loss feedback loop</p>
+          <div class="freq">Monthly</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="system-card">
+      <h3>Technical Architecture</h3>
+      <p>Below is the recommended technology stack. Implement incrementally -- start with Tier 1 (low-cost, immediate value), then layer on Tier 2 and 3.</p>
+
+      <h4 style="margin-top:20px; margin-bottom:12px; font-size:15px; color:var(--nuvo-blue);">Tier 1: Immediate (Week 1-2) -- Automated Monitoring</h4>
+      <div class="tech-stack">
+        <div class="tech-item">
+          <h4>Google Alerts</h4>
+          <p>Set up alerts for each competitor name, key exec names, and product keywords. Delivers to a shared inbox or Slack channel.</p>
+          <span class="tag">FREE</span>
+        </div>
+        <div class="tech-item">
+          <h4>G2 / Capterra Review Monitoring</h4>
+          <p>Subscribe to competitor review feeds. New reviews surface positioning changes, feature gaps, and customer pain points.</p>
+          <span class="tag">FREE / LOW COST</span>
+        </div>
+        <div class="tech-item">
+          <h4>LinkedIn Sales Navigator Alerts</h4>
+          <p>Track competitor companies for headcount changes, job postings (reveal product direction), and leadership moves.</p>
+          <span class="tag">EXISTING TOOL</span>
+        </div>
+        <div class="tech-item">
+          <h4>BuiltWith / Wappalyzer</h4>
+          <p>Monitor competitor tech stack changes -- reveals infrastructure investments and potential product pivots.</p>
+          <span class="tag">FREE TIER</span>
+        </div>
+      </div>
+
+      <h4 style="margin-top:24px; margin-bottom:12px; font-size:15px; color:var(--nuvo-blue);">Tier 2: Short-Term (Month 1-2) -- Structured Collection & CRM Integration</h4>
+      <div class="tech-stack">
+        <div class="tech-item">
+          <h4>CRM Win/Loss Fields (Salesforce / HubSpot)</h4>
+          <p>Add required fields: "Primary Competitor," "Why We Won/Lost," "Competitor Pricing Seen." Feeds the win/loss matrix automatically.</p>
+          <span class="tag">CRM CONFIG</span>
+        </div>
+        <div class="tech-item">
+          <h4>Klue or Crayon (CI Platform)</h4>
+          <p>Automated competitor monitoring that scrapes pricing pages, job boards, press releases, and product changelog. Surfaces weekly digests.</p>
+          <span class="tag">$15-25K/YR</span>
+        </div>
+        <div class="tech-item">
+          <h4>Slack #competitive-intel Channel</h4>
+          <p>Bot-powered channel that aggregates Google Alerts, G2 reviews, and CI platform updates. Sales reps can also submit field intel via Slack form.</p>
+          <span class="tag">INTEGRATION</span>
+        </div>
+        <div class="tech-item">
+          <h4>Quarterly Win/Loss Interviews</h4>
+          <p>Structured 15-minute interviews with won and lost prospects. Template questions: competitor mentioned, pricing comparison, deciding factor.</p>
+          <span class="tag">MANUAL / HIGH VALUE</span>
+        </div>
+      </div>
+
+      <h4 style="margin-top:24px; margin-bottom:12px; font-size:15px; color:var(--nuvo-blue);">Tier 3: Medium-Term (Quarter 2+) -- AI-Powered Intelligence</h4>
+      <div class="tech-stack">
+        <div class="tech-item">
+          <h4>LLM-Powered Competitor Digest</h4>
+          <p>Weekly automated report: an LLM ingests all signals from Tier 1-2 and generates a 1-page competitive briefing with action items. Delivered to Slack Monday mornings.</p>
+          <span class="tag">CUSTOM BUILD</span>
+        </div>
+        <div class="tech-item">
+          <h4>Competitor Win/Loss Automation</h4>
+          <p>LLM-powered system that auto-enriches lost deals with competitor insights from your CI platform. Directly feeds the Win/Loss Matrix from CRM data.</p>
+          <span class="tag">CUSTOM BUILD</span>
+        </div>
+        <div class="tech-item">
+          <h4>Real-Time Battlefield Notifications</h4>
+          <p>When a competitor is mentioned in a deal, Slack alerts the sales rep with this battlecard and relevant recent news. Powered by Slack API + LLM.</p>
+          <span class="tag">CUSTOM BUILD</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHANGE LOG -->
+  <div id="changelog" class="section">
+    <div class="landscape-container">
+      <h3>Change Log</h3>
+      <p style="font-size:14px; color:#6b7280; margin-bottom:20px;">Automated updates every week + manual updates as needed. This log tracks all data changes, new competitors, and framework updates.</p>
+      <div id="changelogEntries"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL FOR BATTLECARDS -->
+<div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle"></h2>
+      <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const competitors = [
+  {
+    name: "Bectran",
+    category: "direct",
+    threat: "high",
+    type: "Direct -- Credit Management SaaS",
+    description: "Full-lifecycle credit, collections, and AR automation platform trusted by 4,000+ organizations including Fortune 100. Most direct feature-for-feature competitor.",
+    tags: ["Credit Management", "Collections", "AR Automation", "Enterprise"],
+    verticals: ["Distribution", "Manufacturing", "Food Service", "Building Materials"],
+    founded: "2010",
+    latestFunding: "Private / Bootstrapped -- no external VC funding disclosed",
+    customerCount: "4,000+",
+    keyCustomers: ["Fortune 100 companies (names undisclosed)", "SMEs to Fortune 500 across distribution, manufacturing, and food service"],
+    keyPartnerships: ["Mastercard (fraud prevention, Dec 2024)", "Plaid (bank verifications, Mar 2025)", "InterPayments (credit card surcharging)", "Cobalt Intelligence (fraud safeguards, Sep 2024)"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "End-to-end O2C platform with AI-powered risk scoring and real-time portfolio monitoring. Emphasizes 60-90% cost savings and rapid onboarding.",
+    landmines: [
+      "If the prospect asks about full O2C automation, Bectran's scope is wider",
+      "If they mention 'we already use Bectran for collections,' position Nuvo as complementary, not replacement",
+      "Bectran will emphasize their Fortune 100 logos to create enterprise credibility gap"
+    ],
+    talkTrack: [
+      "\"Bectran is a solid credit tool -- but it's just a tool. Nuvo is a network. Every business that joins makes everyone's data better.\"",
+      "\"Ask yourself: how many of your partners are already on Bectran? On Nuvo, you're connecting to an ecosystem where verification is already done.\"",
+      "\"Bectran helps you process credit apps faster. Nuvo eliminates the need for some of those apps entirely because the data is already shared on the network.\""
+    ],
+    matrixScores: { smb: "win", midmarket: "win", enterprise: "loss", speed: "win", network: "win", pricing: "neutral", vertical: "neutral", data: "neutral" },
+    recentNews: [
+      { date: "Oct 2025", text: "AI cash application launch" },
+      { date: "Apr 2025", text: "Fraud reporting tool" },
+      { date: "Mar 2025", text: "Plaid integration" },
+      { date: "Dec 2024", text: "Mastercard partnership" }
+    ],
+    hrTrends: {
+      headcount: "~119 employees, 3 continents",
+      headcountTrend: "Stable, steady hiring",
+      openRoles: "8-9 open roles (LinkedIn/Glassdoor)",
+      recentHires: "Hiring BDEs and marketing"
+    },
+    customerReviews: {
+      summary: "Strong reviews for automation and workflow efficiency. Users praise centralized credit management and ERP integrations. Minor complaints about support response times.",
+      g2Rating: "High",
+      quotes: [
+        "Centralizes the entire process and creates efficiency through automation",
+        "Flexible implementation team that listens to concerns and quickly integrates feedback as enhancements"
+      ]
+    }
+  },
+  {
+    name: "HighRadius",
+    category: "direct",
+    threat: "high",
+    type: "Direct -- Enterprise Credit Cloud",
+    description: "Enterprise-grade autonomous finance platform with Credit Cloud, Collections, Cash Application, and more. Outcome-based pricing with $0 upfront.",
+    tags: ["Enterprise", "Credit Cloud", "AI", "ERP Integration", "O2C"],
+    verticals: ["Manufacturing", "Distribution", "Retail", "CPG"],
+    founded: "2006",
+    latestFunding: "$475M+ raised (Series C); valued at $3.1B",
+    customerCount: "800+ enterprise (2,700+ implementations)",
+    keyCustomers: ["3M", "Unilever", "AB InBev", "Sanofi", "Kellogg's", "Danone", "Hershey's"],
+    keyPartnerships: ["EY (strategic alliance for finance transformation)", "Genpact (co-developed STAR solution for automated receivables)", "SAP, Oracle, NetSuite (native ERP integrations)"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "Autonomous finance -- uses AI to automate A/R end-to-end. Outcome-based pricing where customers pay a fraction of realized gains. Positions as the enterprise standard.",
+    landmines: [
+      "If the prospect is a $1B+ revenue company, HighRadius will be the incumbent or shortlisted",
+      "HighRadius will emphasize TCO for enterprise -- 'you'll need Nuvo + other tools to match us'",
+      "Their outcome-based pricing makes budget conversations hard to win against"
+    ],
+    talkTrack: [
+      "\"HighRadius is built for billion-dollar companies with 12-month implementations. If you need to move fast and grow, that's not the right fit.\"",
+      "\"HighRadius charges based on outcomes because they know the implementation is painful. We charge straightforward pricing because we deploy in days.\"",
+      "\"With Nuvo, your new customers might already be on the network -- that's data HighRadius can never give you.\""
+    ],
+    matrixScores: { smb: "win", midmarket: "neutral", enterprise: "loss", speed: "win", network: "win", pricing: "neutral", vertical: "loss", data: "loss" },
+    recentNews: [
+      { date: "Feb 2026", text: "Outcome-based pricing for oCFO" },
+      { date: "Apr 2025", text: "Gartner MQ Challenger for Financial Close" },
+      { date: "N/A", text: "IDC MarketScape Leader in AR Automation" },
+      { date: "N/A", text: "2027 goal for fully autonomous finance platform" }
+    ],
+    hrTrends: {
+      headcount: "~4,481 employees (Feb 2026)",
+      headcountTrend: "Mixed -- hiring in US, restructuring in India",
+      openRoles: "44 open US roles",
+      recentHires: "95 new hires, 372 departures; Engineering largest function (23%); Bhubaneswar office closed"
+    },
+    customerReviews: {
+      summary: "Powerful automation but mixed feedback on performance and support. Enterprise users love AI-powered matching but report slow speeds, limited customization, and inconsistent support.",
+      g2Rating: "Moderate-high",
+      quotes: [
+        "AI-powered matching can automate 90%+ of payment reconciliation",
+        "Saved a lot of time and effort in the processing of receivables",
+        "Limited functionality regarding advanced reporting and customization needs"
+      ]
+    }
+  },
+  {
+    name: "Credit Pulse",
+    category: "direct",
+    threat: "medium",
+    type: "Direct -- AI Credit Risk Platform",
+    description: "AI-first credit decisioning for distributors and manufacturers. Scout AI predicts bankruptcy 30% better than traditional bureaus. 3-day setup.",
+    tags: ["AI", "Credit Risk", "Distributors", "Manufacturers", "Fraud"],
+    verticals: ["Building Materials", "Food Service", "Manufacturing", "Distribution"],
+    founded: "2023",
+    latestFunding: "$3M Seed (led by Amplo; Purdue Strategic Ventures, Denver Ventures, Forum Ventures)",
+    customerCount: "Growing -- early stage",
+    keyCustomers: ["SRS Distribution", "Corken Steel", "Matrix Adhesives", "Nowadays"],
+    keyPartnerships: ["People Data Labs (entity resolution & principal linking)", "Beachfront Credit Services (fintech portfolio expansion)"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "AI-native credit risk that replaces bureaus with predictive intelligence. Emphasizes 30% better bankruptcy prediction and 60% faster approvals. 500+ data points.",
+    landmines: [
+      "If the prospect's #1 pain is bad debt from defaults, Credit Pulse's predictive claims are powerful",
+      "Credit Pulse targets exact same verticals as Nuvo (building materials, food, manufacturing)",
+      "They may offer aggressive startup pricing to win market share"
+    ],
+    talkTrack: [
+      "\"Credit Pulse is a good AI model. But models are only as good as their data. Nuvo has real trade behavior data from 50,000 businesses -- that's a fundamentally different signal.\"",
+      "\"If all you need is a credit score, sure, Credit Pulse works. But your credit team also needs onboarding, verification, fraud detection, and partner discovery -- that's Nuvo.\"",
+      "\"We're not just predicting risk -- we're building a trust layer for all of B2B trade. Credit scoring is table stakes for us.\""
+    ],
+    matrixScores: { smb: "neutral", midmarket: "neutral", enterprise: "win", speed: "neutral", network: "win", pricing: "neutral", vertical: "neutral", data: "neutral" },
+    recentNews: [
+      { date: "Sep 2025", text: "Beachfront Credit Services launched Credit Pulse platform" },
+      { date: "N/A", text: "Seed round $3M led by Amplo closed" }
+    ],
+    hrTrends: {
+      headcount: "Small team (early-stage)",
+      headcountTrend: "Growing -- early stage expansion",
+      openRoles: "Actively hiring post-seed",
+      recentHires: "Building out product and sales teams"
+    },
+    customerReviews: {
+      summary: "Too early for meaningful review volume. Early customers report strong results in bankruptcy prediction and fraud detection.",
+      g2Rating: "No formal ratings yet",
+      quotes: [
+        "Detecting fake entities instantly, processing legitimate applications 70% faster, reducing bad debt by more than 30% (Matrix Adhesives case study)"
+      ]
+    }
+  },
+  {
+    name: "Apruve / TreviPay",
+    category: "net-terms",
+    threat: "medium",
+    type: "Adjacent -- B2B Trade Credit & BNPL",
+    description: "Embedded B2B trade credit and BNPL solution enabling net terms in 40+ countries. Apruve acquired by TreviPay in Dec 2022. Major B2B payments network.",
+    tags: ["Net Terms", "BNPL", "Trade Credit", "Global", "Payments"],
+    verticals: ["E-commerce", "Marketplaces", "Manufacturing", "Distribution"],
+    founded: "2014 (Apruve); TreviPay est. earlier",
+    latestFunding: "$175M total raised (TreviPay); backed by Corsair Capital",
+    customerCount: "Mid-market to enterprise",
+    keyCustomers: ["Walmart", "Sonder", "Currys", "Northern Tool + Equipment"],
+    keyPartnerships: ["HSBC (e-commerce trade solutions, Mar 2025)", "Corsair Capital (strategic investor)", "Shopify & BigCommerce (e-commerce integrations)"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "Makes offering net terms as easy as accepting a credit card. Global reach (40+ countries), instant credit approvals up to $1M+. Emphasizes guaranteed next-day financing.",
+    landmines: [
+      "If the prospect's primary need is financing/BNPL, Nuvo is not a substitute",
+      "TreviPay acquisition means they now have significant enterprise resources",
+      "Prospects may want both -- position Nuvo as complementary to Apruve/TreviPay"
+    ],
+    talkTrack: [
+      "\"Apruve solves a different problem -- they finance the transaction. Nuvo is about the relationship: who is this business, can you trust them, how fast can you onboard them.\"",
+      "\"Many of our customers use a financing solution alongside Nuvo. We make the credit decision; the financing partner handles the capital.\"",
+      "\"If your biggest pain is cash flow, Apruve might help. If your biggest pain is slow onboarding and unknown partner risk, that's Nuvo.\""
+    ],
+    matrixScores: { smb: "neutral", midmarket: "neutral", enterprise: "loss", speed: "win", network: "win", pricing: "neutral", vertical: "neutral", data: "win" },
+    recentNews: [
+      { date: "Jan 2026", text: "Visa partnership for Pay By Invoice" },
+      { date: "Sep 2025", text: "Walmart Business Pay By Invoice launch" },
+      { date: "Oct 2025", text: "Sonder partnership for corporate travel net terms" },
+      { date: "N/A", text: "Albertsons B2B pay-by-invoice partnership" }
+    ],
+    hrTrends: {
+      headcount: "~856 employees (Feb 2026)",
+      headcountTrend: "Stable",
+      openRoles: "5 open roles on Indeed",
+      recentHires: "6 continents"
+    },
+    customerReviews: {
+      summary: "Users praise ease of use and reliability for B2B payment automation. Strong integrations with accounting software. May not suit low-volume B2B businesses.",
+      g2Rating: "Strong user satisfaction",
+      quotes: [
+        "Amazing, easy to use and reliable",
+        "Great interface with advanced security measures"
+      ]
+    }
+  },
+  {
+    name: "Resolve",
+    category: "net-terms",
+    threat: "medium",
+    type: "Adjacent -- Net Terms & AR Automation",
+    description: "B2B net terms and payments platform. AI-powered underwriting with instant credit decisions. Pays sellers upfront while buyers get 30/60/90-day terms.",
+    tags: ["Net Terms", "Upfront Payment", "AI Underwriting", "SMB", "Distribution"],
+    verticals: ["HVAC", "Packaging", "Office Supplies", "General Distribution"],
+    founded: "2019",
+    latestFunding: "$60M+ total raised; backed by PayPal & Affirm co-founder Max Levchin",
+    customerCount: "12,000+ businesses; ~3,500 payments/month",
+    keyCustomers: ["SMB manufacturers and wholesalers across HVAC, packaging, and office supplies verticals"],
+    keyPartnerships: ["PayPal (strategic investor)", "Max Levchin / Affirm (co-founder as investor)", "ERP & finance stack integrations (bi-directional sync)"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "3x B2B sales by removing payment friction. Sellers get paid upfront; buyers get net terms. AI-powered collections automation.",
+    landmines: [
+      "If cash flow is the #1 pain, Resolve's upfront payment model is hard to beat",
+      "Resolve targets the same SMB distributor segment as Nuvo",
+      "Their 'free for buyers' model reduces adoption friction"
+    ],
+    talkTrack: [
+      "\"Resolve is a factoring service dressed up as tech. Nuvo is building the infrastructure for how all B2B trade will work.\"",
+      "\"Resolve solves accounts receivable. Nuvo solves the entire supplier-buyer trust problem -- from first contact to ongoing trade.\"",
+      "\"You can use Resolve for financing and Nuvo for everything else -- we complement each other.\""
+    ],
+    matrixScores: { smb: "neutral", midmarket: "win", enterprise: "win", speed: "neutral", network: "win", pricing: "loss", vertical: "neutral", data: "win" },
+    recentNews: [
+      { date: "Aug 2025", text: "MAK Digital partnership" },
+      { date: "N/A", text: "2025 BigCommerce Innovative Integration Award winner" },
+      { date: "N/A", text: "Grew to 15,000+ businesses" }
+    ],
+    hrTrends: {
+      headcount: "Growing team",
+      headcountTrend: "Growing -- backed by $60M+",
+      openRoles: "N/A",
+      recentHires: "Expanding product and sales"
+    },
+    customerReviews: {
+      summary: "Consistently positive reviews. Users love the simplicity, customer support responsiveness, and effectiveness of net terms offering. Minor requests for better reporting.",
+      g2Rating: "Strong user satisfaction",
+      quotes: [
+        "Simple alternative for offering net terms without exposing to unnecessary financial risk",
+        "Easy to set up and use with fabulous customer support",
+        "Wish there was a way to edit invoice amounts same-day"
+      ]
+    }
+  },
+  {
+    name: "Billtrust",
+    category: "ar-otc",
+    threat: "medium",
+    type: "Adjacent -- AR Automation & O2C",
+    description: "Leading B2B AR automation platform with AI-powered Credit, Invoicing, Payments, Collections, and Cash Application. Acquired by EQT for $1.7B.",
+    tags: ["AR Automation", "O2C", "AI", "Enterprise", "Payments"],
+    verticals: ["Retail", "Manufacturing", "Distribution", "Building Materials"],
+    founded: "2001",
+    latestFunding: "Acquired by EQT Private Equity for $1.7B (Dec 2022); 9 prior acquisitions",
+    customerCount: "2,600+ customers across 40+ industries",
+    keyCustomers: ["White Cap", "US LBM", "McPherson Oil", "Kinepolis", "Leica"],
+    keyPartnerships: ["EQT Partners (PE owner)", "Order2Cash (acquired)", "Major ERP platforms (SAP, Oracle, NetSuite)"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "Comprehensive O2C platform that unifies credit, invoicing, payments, collections, and cash application. AI-powered 'Agentic Email' resolves collector emails 10x faster.",
+    landmines: [
+      "If the prospect wants to consolidate AR onto one platform, Billtrust's scope wins",
+      "Billtrust may already be incumbent for invoicing/payments -- hard to displace",
+      "They'll position Nuvo as 'just onboarding' vs. their full suite"
+    ],
+    talkTrack: [
+      "\"Billtrust is an AR tool. Nuvo is a trade network. We're solving a fundamentally different problem -- and one that Billtrust can't solve because they're single-player.\"",
+      "\"If you already have Billtrust for invoicing, great. Nuvo handles everything before the invoice -- the part Billtrust doesn't touch.\"",
+      "\"Ask Billtrust how many of your partners are already verified on their platform. That answer is zero. On Nuvo, it could be hundreds.\""
+    ],
+    matrixScores: { smb: "win", midmarket: "neutral", enterprise: "loss", speed: "win", network: "win", pricing: "win", vertical: "neutral", data: "neutral" },
+    recentNews: [
+      { date: "Mar 2026", text: "Agentic Credit Lines launched" },
+      { date: "Nov 2025", text: "Collections Agentic Procedures released" },
+      { date: "Dec 2025", text: "Grant Halloran appointed CEO (ex-Planful CEO who tripled revenue)" },
+      { date: "N/A", text: "G2 Leader 19 consecutive quarters" },
+      { date: "N/A", text: "Deloitte Belgium partnership" }
+    ],
+    hrTrends: {
+      headcount: "~817 employees (Feb 2026)",
+      headcountTrend: "Leadership transition -- new CEO from Planful",
+      openRoles: "N/A",
+      recentHires: "New CEO Grant Halloran hired Dec 2025"
+    },
+    customerReviews: {
+      summary: "Strong 4.7/5 on Capterra. G2 Leader for 19 consecutive quarters. Users praise invoice automation and professional output. Complaints focus on delayed updates, login glitches, and slow performance during uploads.",
+      g2Rating: "4.7/5 on Capterra, G2 Leader",
+      quotes: [
+        "Process is automated, invoices look professional, and we've realized savings in every area -- labor, postage, forms",
+        "Unlocked $2M in cash flow, cut DSO by 26%, and hit 98% touchless payments (McPherson Oil)"
+      ]
+    }
+  },
+  {
+    name: "Sidetrade",
+    category: "ar-otc",
+    threat: "low",
+    type: "Adjacent -- AI O2C Platform",
+    description: "European-origin AI-powered O2C platform with 24 years of B2B buyer payment behavior data. 'Aimie' AI trained on $8T+ in B2B transactions.",
+    tags: ["AI", "O2C", "Collections", "European", "Analytics"],
+    verticals: ["Retail", "Manufacturing", "Services", "Telco"],
+    founded: "2000",
+    latestFunding: "Public company (Paris Euronext: ALBFR); 450 employees across NA, EU, APAC",
+    customerCount: "Enterprise; supports 85 countries",
+    keyCustomers: ["Randstad France", "SECURITAS", "OpenText"],
+    keyPartnerships: ["Tableau (analytics layer)", "Gartner-recognized Leader in Invoice-to-Cash Magic Quadrant"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "AI leader in O2C with proprietary 'Aimie' AI -- world's first autonomous AI cash collection agent. Emphasizes predictive collections, automated dunning, and credit risk monitoring.",
+    landmines: [
+      "Less likely to compete directly -- Sidetrade is stronger in EU and large enterprise",
+      "If prospect has EU operations, Sidetrade's European compliance expertise matters",
+      "Sidetrade may come up in enterprise RFPs with global scope"
+    ],
+    talkTrack: [
+      "\"Sidetrade is a European O2C platform focused on collections. If your challenge is onboarding and verifying US trade partners, that's a completely different problem.\"",
+      "\"We're building for the next generation of B2B trade. Sidetrade is optimizing for the last generation.\""
+    ],
+    matrixScores: { smb: "win", midmarket: "win", enterprise: "neutral", speed: "win", network: "win", pricing: "win", vertical: "win", data: "loss" },
+    recentNews: [
+      { date: "May 2025", text: "Launched Aimie autonomous AI cash collection agent (first ever)" },
+      { date: "Feb 2026", text: "Randstad France deployed Aimie" },
+      { date: "Jun 2025", text: "Global partnership with major consulting firm" },
+      { date: "N/A", text: "H1 2025 revenue up 19% YoY, record 16% operating margin" }
+    ],
+    hrTrends: {
+      headcount: "~450 employees",
+      headcountTrend: "Expanding in North America",
+      openRoles: "Hiring senior US sales roles",
+      recentHires: "Vertical Sales Director, AVP Pre-Sales, Sr Dir Global Marketing"
+    },
+    customerReviews: {
+      summary: "4/5 stars on Capterra. Implementation teams praised as outstanding. Some historical customer service issues during Amalto acquisition period, now improved. Strong Gartner recognition.",
+      g2Rating: "4/5 on Capterra",
+      quotes: [
+        "Implementation team was outstanding, highly attentive, and professional",
+        "Customer Management team has been responsive and constructive"
+      ]
+    }
+  },
+  {
+    name: "Dun & Bradstreet",
+    category: "data",
+    threat: "medium",
+    type: "Adjacent -- Business Credit Data",
+    description: "World's largest business credit data set. D-U-N-S numbers are the standard for business identity. Used by 90% of the Fortune 500.",
+    tags: ["Data", "Credit Bureau", "Enterprise", "Global", "DUNS Number"],
+    verticals: ["All"],
+    founded: "1841",
+    latestFunding: "Public (NYSE: DNB); being acquired by Clearlake Capital for $7.7B (announced Mar 2025). TTM revenue ~$2.4B",
+    customerCount: "215,000+ clients globally",
+    keyCustomers: ["90% of Fortune 500", "FedEx", "Midas Safety", "Top 200 clients avg 20+ year tenure"],
+    keyPartnerships: ["Clearlake Capital (pending acquisition)", "Aravo, Quantexa, Alteryx (data integrations)", "Major ERP/CRM platforms"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "The gold standard in business credit data and identity. D-U-N-S numbers are required by many procurement processes. 180+ years of data, 200+ countries.",
+    landmines: [
+      "Many companies are contractually tied to D&B data -- can't fully replace",
+      "Position Nuvo as complementary to D&B, not a replacement",
+      "D&B data is included in many ERP/credit tools -- it's a data source, not a direct competitor",
+      "Nuvo actually integrates Creditsafe data -- acknowledge this honestly"
+    ],
+    talkTrack: [
+      "\"D&B gives you a credit report. Nuvo gives you a living, network-verified business profile with real-time trade signals.\"",
+      "\"You probably already pay for D&B and still do manual verification on top. Nuvo automates that entire process.\"",
+      "\"We're not replacing your D&B subscription -- we're making it unnecessary for most of your onboarding decisions.\""
+    ],
+    matrixScores: { smb: "win", midmarket: "win", enterprise: "loss", speed: "win", network: "win", pricing: "win", vertical: "neutral", data: "loss" },
+    recentNews: [
+      { date: "Mar 2025", text: "Clearlake acquisition announced ($7.7B)" },
+      { date: "Aug 2025", text: "Acquisition completed" },
+      { date: "Jan 2026", text: "700+ employees laid off across all US business units" },
+      { date: "N/A", text: "Going private from NYSE" }
+    ],
+    hrTrends: {
+      headcount: "~6,247 (Dec 2024)",
+      headcountTrend: "Significant restructuring -- PE-driven cost cuts",
+      openRoles: "N/A",
+      recentHires: "700+ laid off Jan 2026 post-Clearlake acquisition, all US business units affected up to SVP level"
+    },
+    customerReviews: {
+      summary: "Trusted for data breadth but increasingly criticized for data staleness, high pricing, and complex contracts. Post-Clearlake layoffs raising concerns about future service quality.",
+      g2Rating: "Established but declining satisfaction",
+      quotes: [
+        "Data lag issues often cited in reviews",
+        "Expensive multi-year contracts",
+        "20+ year average tenure among top 200 clients speaks to data depth"
+      ]
+    }
+  },
+  {
+    name: "Manual Processes (Status Quo)",
+    category: "data",
+    threat: "high",
+    type: "Legacy -- The Real Competition",
+    description: "Faxes, phone calls, emailed PDFs, spreadsheet-based credit tracking. This is the most common 'competitor' Nuvo faces -- doing nothing or doing it manually.",
+    tags: ["Status Quo", "Spreadsheets", "Manual", "Inertia"],
+    verticals: ["All -- especially SMB"],
+    founded: "N/A",
+    latestFunding: "N/A",
+    customerCount: "Vast majority of B2B businesses",
+    keyCustomers: ["Every prospect that hasn't adopted a credit management platform yet"],
+    keyPartnerships: ["N/A -- this is the absence of a solution"],
+    winRateVsNuvo: { rate: "TBD", label: "Needs CRM data", class: "wr-unknown" },
+    positioning: "\"We've always done it this way.\" The biggest barrier is organizational inertia and comfort with existing processes.",
+    landmines: [
+      "The biggest objection is not the product -- it's change management",
+      "Calculate the cost of manual onboarding per customer (typically $200-500+ in labor)",
+      "If a competitor is mentioned, the real deal is Nuvo vs. manual -- the competitor is often a stalking horse"
+    ],
+    talkTrack: [
+      "\"How many hours per week does your credit team spend on manual applications? Multiply that by their hourly rate -- that's what doing nothing costs you.\"",
+      "\"Manual processes don't just cost time -- they cost deals. Every day a customer waits for credit approval is a day they might buy from someone else.\"",
+      "\"The question isn't whether you can afford Nuvo. It's whether you can afford to keep losing a week on every new customer onboarding.\""
+    ],
+    matrixScores: { smb: "win", midmarket: "win", enterprise: "win", speed: "win", network: "win", pricing: "neutral", vertical: "win", data: "win" },
+    recentNews: [],
+    hrTrends: {
+      headcount: "N/A",
+      headcountTrend: "N/A",
+      openRoles: "N/A",
+      recentHires: "N/A"
+    },
+    customerReviews: {
+      summary: "N/A",
+      g2Rating: "N/A",
+      quotes: []
+    }
+  }
+];
+
+const changelog = [
+  { date: "2026-03-31", text: "Added three new data sections to all competitor profiles: Recent News, HR Trends, and Customer Reviews. Threat badges removed from competitor cards; threat data retained for internal reference.", source: "Data refresh: News from Crunchbase, LinkedIn, G2, press releases; HR data from LinkedIn; Reviews from G2, Capterra, customer case studies" },
+  { date: "2026-03-31", text: "Added key customer logos, partnerships, and latest funding data to all competitor profiles.", source: "Research: Bectran.com, HighRadius.com, TechCrunch, Crunchbase, PitchBook, G2, press releases" },
+  { date: "2026-03-31", text: "Added win rate vs. Nuvo placeholder field to all competitors -- requires CRM win/loss data to populate.", source: "Framework design: to be fed by Salesforce/HubSpot CRM fields" },
+  { date: "2026-03-31", text: "Initial competitive intelligence framework created with 9 competitors across 4 categories.", source: "Research: Nuvo website, G2, TechCrunch, Crunchbase, competitor websites" },
+  { date: "2026-03-31", text: "Battlecards created for all 9 competitors with landmines and talk tracks.", source: "Research: G2 reviews, feature comparison, pricing pages, press releases" },
+  { date: "2026-03-31", text: "Win/loss matrix populated across 8 dimensions, 6 verticals, and 4 buyer personas.", source: "Research: Market positioning analysis, vertical focus review" },
+  { date: "2026-03-31", text: "3-tier automated update system designed (Immediate, Short-term, Medium-term) with full cadence and ownership table.", source: "Best practice: CI frameworks from Klue, Crayon, and competitive intelligence benchmarks" }
+];
+
+// ===================== RENDERING =====================
+
+function getWinRateHTML(wr) {
+  return `<span class="win-rate-badge ${wr.class}">${wr.rate !== 'TBD' ? wr.rate : ''} ${wr.label}</span>`;
+}
+
+function renderCompetitors(filter, search) {
+  filter = filter || 'all';
+  search = search || '';
+  const grid = document.getElementById('competitorGrid');
+  const filtered = competitors.filter(c => {
+    const matchCat = filter === 'all' || c.category === filter;
+    const s = search.toLowerCase();
+    const matchSearch = s === '' ||
+      c.name.toLowerCase().includes(s) ||
+      c.type.toLowerCase().includes(s) ||
+      c.tags.some(t => t.toLowerCase().includes(s)) ||
+      c.verticals.some(v => v.toLowerCase().includes(s)) ||
+      c.keyCustomers.some(k => k.toLowerCase().includes(s)) ||
+      (c.keyPartnerships && c.keyPartnerships.some(p => p.toLowerCase().includes(s)));
+    return matchCat && matchSearch;
+  });
+
+  grid.innerHTML = filtered.map(c => `
+    <div class="competitor-card" onclick="openBattlecard('${c.name}')">
+      <div class="card-header">
+        <h3>${c.name}</h3>
+      </div>
+      <div class="card-type">${c.type}</div>
+      <div class="card-desc">${c.description}</div>
+      <div class="card-meta-grid">
+        <div class="card-meta-item">
+          <div class="card-meta-label">Founded</div>
+          <div class="card-meta-value">${c.founded}</div>
+        </div>
+        <div class="card-meta-item">
+          <div class="card-meta-label">Latest Funding</div>
+          <div class="card-meta-value">${c.latestFunding}</div>
+        </div>
+        <div class="card-meta-item">
+          <div class="card-meta-label">Customer Base</div>
+          <div class="card-meta-value">${c.customerCount}</div>
+        </div>
+        <div class="card-meta-item">
+          <div class="card-meta-label">Win Rate vs. Nuvo</div>
+          <div class="card-meta-value">${getWinRateHTML(c.winRateVsNuvo)}</div>
+        </div>
+      </div>
+      <div class="card-customers">
+        <span class="card-meta-label">Key Customers</span>
+        ${c.keyCustomers.slice(0, 3).join(' &bull; ')}${c.keyCustomers.length > 3 ? ' &bull; +' + (c.keyCustomers.length - 3) + ' more' : ''}
+      </div>
+      <div class="card-tags">
+        ${c.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderBattlecards() {
+  const grid = document.getElementById('battlecardGrid');
+  grid.innerHTML = competitors.filter(c => c.name !== 'Manual Processes (Status Quo)').map(c => `
+    <div class="quick-ref-card" style="cursor:pointer;" onclick="openBattlecard('${c.name}')">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h4>${c.name}</h4>
+        ${getWinRateHTML(c.winRateVsNuvo)}
+      </div>
+      <div class="killer-line">${c.talkTrack[0]}</div>
+      <ul>
+        <li><strong>Watch For:</strong> ${c.landmines[0]}</li>
+        <li><strong>Key Customers:</strong> ${c.keyCustomers.slice(0, 3).join(', ')}</li>
+        <li><strong>Funding:</strong> ${c.latestFunding}</li>
+      </ul>
+    </div>
+  `).join('');
+}
+
+function renderMatrix() {
+  const body = document.getElementById('matrixBody');
+  const labels = {
+    win: '<span class="win-cell">Nuvo Wins</span>',
+    loss: '<span class="loss-cell">They Win</span>',
+    neutral: '<span class="neutral-cell">Depends</span>'
+  };
+  body.innerHTML = competitors.map(c => `
+    <tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${labels[c.matrixScores.smb]}</td>
+      <td>${labels[c.matrixScores.midmarket]}</td>
+      <td>${labels[c.matrixScores.enterprise]}</td>
+      <td>${labels[c.matrixScores.speed]}</td>
+      <td>${labels[c.matrixScores.network]}</td>
+      <td>${labels[c.matrixScores.pricing]}</td>
+      <td>${labels[c.matrixScores.vertical]}</td>
+      <td>${labels[c.matrixScores.data]}</td>
+    </tr>
+  `).join('');
+}
+
+function renderChangelog() {
+  document.getElementById('changelogEntries').innerHTML = changelog.map(e => `
+    <div class="log-entry">
+      <div class="log-date">${e.date}</div>
+      <div class="log-text">${e.text}</div>
+      <div class="log-source">Source: ${e.source}</div>
+    </div>
+  `).join('');
+}
+
+// ===================== BATTLECARD MODAL =====================
+
+function openBattlecard(name) {
+  const c = competitors.find(x => x.name === name);
+  if (!c) return;
+
+  document.getElementById('modalTitle').textContent = c.name + ' -- Sales Battlecard';
+
+  let newsHTML = '';
+  if (c.recentNews && c.recentNews.length > 0) {
+    newsHTML = `
+      <div class="bc-full-width" style="margin-top:20px;">
+        <h4>RECENT NEWS</h4>
+        <div class="news-timeline">
+          ${c.recentNews.map(n => `
+            <div class="news-item">
+              <div class="news-date">${n.date}</div>
+              <div class="news-text">${n.text}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  let hrHTML = '';
+  if (c.hrTrends && c.hrTrends.headcount !== 'N/A') {
+    hrHTML = `
+      <div class="bc-full-width" style="margin-top:20px;">
+        <h4>HR TRENDS</h4>
+        <div class="hr-trends-grid">
+          <div class="hr-trend-item">
+            <div class="hr-trend-label">Headcount</div>
+            <div class="hr-trend-value">${c.hrTrends.headcount}</div>
+          </div>
+          <div class="hr-trend-item">
+            <div class="hr-trend-label">Trend</div>
+            <div class="hr-trend-indicator">${c.hrTrends.headcountTrend}</div>
+          </div>
+          <div class="hr-trend-item">
+            <div class="hr-trend-label">Open Roles</div>
+            <div class="hr-trend-value">${c.hrTrends.openRoles}</div>
+          </div>
+          <div class="hr-trend-item">
+            <div class="hr-trend-label">Recent Hires</div>
+            <div class="hr-trend-value" style="font-size:12px;">${c.hrTrends.recentHires}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  let reviewsHTML = '';
+  if (c.customerReviews && c.customerReviews.summary !== 'N/A') {
+    reviewsHTML = `
+      <div class="bc-full-width" style="margin-top:20px;">
+        <h4>CUSTOMER REVIEWS</h4>
+        <div class="reviews-summary">
+          ${c.customerReviews.summary}
+        </div>
+        ${c.customerReviews.quotes && c.customerReviews.quotes.length > 0 ? `
+          <div class="review-quotes">
+            ${c.customerReviews.quotes.map(q => `
+              <div class="review-quote">
+                <div class="review-quote-text">"${q}"</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  document.getElementById('modalBody').innerHTML = `
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center;">
+        <span style="font-size:12px; color:#6b7280; padding:3px 10px; background:#f3f4f6; border-radius:12px;">${c.type}</span>
+        ${getWinRateHTML(c.winRateVsNuvo)}
+      </div>
+      <p style="font-size:14px; color:#6b7280;">${c.description}</p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-box-label">Founded</div>
+        <div class="info-box-value">${c.founded}</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-label">Latest Funding</div>
+        <div class="info-box-value">${c.latestFunding}</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-label">Customer Base</div>
+        <div class="info-box-value">${c.customerCount}</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px; padding:16px; background:#f0fdf4; border-radius:8px; border:1px solid #bbf7d0;">
+      <h4 style="font-size:13px; font-weight:700; color:var(--nuvo-green); margin-bottom:8px;">KEY CUSTOMERS</h4>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        ${c.keyCustomers.map(k => `<span style="padding:4px 12px; background:white; border-radius:6px; font-size:13px; border:1px solid #bbf7d0; color:var(--nuvo-gray);">${k}</span>`).join('')}
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px; padding:16px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe;">
+      <h4 style="font-size:13px; font-weight:700; color:var(--nuvo-blue); margin-bottom:8px;">KEY PARTNERSHIPS</h4>
+      <div style="font-size:13px; color:var(--nuvo-gray);">
+        ${Array.isArray(c.keyPartnerships) ? c.keyPartnerships.map(p => `<div style="padding:3px 0;">&bull; ${p}</div>`).join('') : c.keyPartnerships}
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px; padding:16px; background:#f9fafb; border-radius:8px; border:1px solid #e5e7eb;">
+      <h4 style="font-size:13px; font-weight:700; color:var(--nuvo-gray); margin-bottom:6px;">HOW THEY POSITION</h4>
+      <p style="font-size:13px; color:#6b7280;">${c.positioning}</p>
+    </div>
+
+    <div class="battlecard-grid">
+      <div class="battlecard-section bc-landmines">
+        <div class="bc-section-title">Landmines to Watch</div>
+        ${c.landmines.map(l => `<div class="bc-item">${l}</div>`).join('')}
+      </div>
+      <div class="battlecard-section bc-talk-track">
+        <div class="bc-section-title">Recommended Talk Track</div>
+        ${c.talkTrack.map(t => `<div class="bc-item">${t}</div>`).join('')}
+      </div>
+    </div>
+
+    <div class="bc-full-width" style="margin-top:20px;">
+      <h4>Key Verticals</h4>
+      <p style="font-size:13px; color:#6b7280;">${c.verticals.join(', ')}</p>
+    </div>
+
+    ${newsHTML}
+    ${hrHTML}
+    ${reviewsHTML}
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(event) {
+  if (event.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+}
+
+// ===================== NAVIGATION & FILTERS =====================
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+let currentCategory = 'all';
+function filterByCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const searchVal = document.querySelector('.search-bar') ? document.querySelector('.search-bar').value : '';
+  renderCompetitors(cat, searchVal);
+}
+
+function filterCompetitors(search) {
+  renderCompetitors(currentCategory, search);
+}
+
+// ===================== INIT =====================
+document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+renderCompetitors();
+renderBattlecards();
+renderMatrix();
+renderChangelog();
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('modalOverlay').classList.remove('open');
+});
+</script>
+</body>
+</html>
