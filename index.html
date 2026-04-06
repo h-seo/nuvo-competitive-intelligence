@@ -1372,6 +1372,7 @@ const competitors = [
 ];
 
 const changelog = [
+  { date: "2026-04-05", text: "Recent News section now pulls live headlines from Google News for each competitor. Articles are clickable links with source attribution. Static data is retained as fallback when the live feed is unavailable.", source: "Feature: Google News RSS integration via allorigins.win CORS proxy" },
   { date: "2026-03-31", text: "Added three new data sections to all competitor profiles: Recent News, HR Trends, and Customer Reviews. Threat badges removed from competitor cards; threat data retained for internal reference.", source: "Data refresh: News from Crunchbase, LinkedIn, G2, press releases; HR data from LinkedIn; Reviews from G2, Capterra, customer case studies" },
   { date: "2026-03-31", text: "Added key customer logos, partnerships, and latest funding data to all competitor profiles.", source: "Research: Bectran.com, HighRadius.com, TechCrunch, Crunchbase, PitchBook, G2, press releases" },
   { date: "2026-03-31", text: "Added win rate vs. Nuvo placeholder field to all competitors -- requires CRM win/loss data to populate.", source: "Framework design: to be fed by Salesforce/HubSpot CRM fields" },
