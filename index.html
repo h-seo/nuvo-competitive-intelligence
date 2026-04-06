@@ -982,7 +982,9 @@ const competitors = [
       headcount: "~119 employees, 3 continents",
       headcountTrend: "Stable, steady hiring",
       openRoles: "8-9 open roles (LinkedIn/Glassdoor)",
-      recentHires: "Hiring BDEs and marketing"
+      recentHires: "Hiring BDEs and marketing",
+      source: "LinkedIn, Glassdoor",
+      asOf: "2026-03-31"
     },
     customerReviews: {
       summary: "Strong reviews for automation and workflow efficiency. Users praise centralized credit management and ERP integrations. Minor complaints about support response times.",
@@ -1030,7 +1032,9 @@ const competitors = [
       headcount: "~4,481 employees (Feb 2026)",
       headcountTrend: "Mixed -- hiring in US, restructuring in India",
       openRoles: "44 open US roles",
-      recentHires: "95 new hires, 372 departures; Engineering largest function (23%); Bhubaneswar office closed"
+      recentHires: "95 new hires, 372 departures; Engineering largest function (23%); Bhubaneswar office closed",
+      source: "LinkedIn, Glassdoor",
+      asOf: "2026-03-31"
     },
     customerReviews: {
       summary: "Powerful automation but mixed feedback on performance and support. Enterprise users love AI-powered matching but report slow speeds, limited customization, and inconsistent support.",
@@ -1077,7 +1081,9 @@ const competitors = [
       headcount: "Small team (early-stage)",
       headcountTrend: "Growing -- early stage expansion",
       openRoles: "Actively hiring post-seed",
-      recentHires: "Building out product and sales teams"
+      recentHires: "Building out product and sales teams",
+      source: "LinkedIn, Crunchbase",
+      asOf: "2026-03-31"
     },
     customerReviews: {
       summary: "Too early for meaningful review volume. Early customers report strong results in bankruptcy prediction and fraud detection.",
@@ -1124,7 +1130,9 @@ const competitors = [
       headcount: "~856 employees (Feb 2026)",
       headcountTrend: "Stable",
       openRoles: "5 open roles on Indeed",
-      recentHires: "6 continents"
+      recentHires: "6 continents",
+      source: "LinkedIn, Indeed",
+      asOf: "2026-03-31"
     },
     customerReviews: {
       summary: "Users praise ease of use and reliability for B2B payment automation. Strong integrations with accounting software. May not suit low-volume B2B businesses.",
@@ -1171,7 +1179,9 @@ const competitors = [
       headcount: "Growing team",
       headcountTrend: "Growing -- backed by $60M+",
       openRoles: "N/A",
-      recentHires: "Expanding product and sales"
+      recentHires: "Expanding product and sales",
+      source: "LinkedIn, Crunchbase",
+      asOf: "2026-03-31"
     },
     customerReviews: {
       summary: "Consistently positive reviews. Users love the simplicity, customer support responsiveness, and effectiveness of net terms offering. Minor requests for better reporting.",
@@ -1221,7 +1231,9 @@ const competitors = [
       headcount: "~817 employees (Feb 2026)",
       headcountTrend: "Leadership transition -- new CEO from Planful",
       openRoles: "N/A",
-      recentHires: "New CEO Grant Halloran hired Dec 2025"
+      recentHires: "New CEO Grant Halloran hired Dec 2025",
+      source: "LinkedIn, Glassdoor",
+      asOf: "2026-03-31"
     },
     customerReviews: {
       summary: "Strong 4.7/5 on Capterra. G2 Leader for 19 consecutive quarters. Users praise invoice automation and professional output. Complaints focus on delayed updates, login glitches, and slow performance during uploads.",
@@ -1268,7 +1280,9 @@ const competitors = [
       headcount: "~450 employees",
       headcountTrend: "Expanding in North America",
       openRoles: "Hiring senior US sales roles",
-      recentHires: "Vertical Sales Director, AVP Pre-Sales, Sr Dir Global Marketing"
+      recentHires: "Vertical Sales Director, AVP Pre-Sales, Sr Dir Global Marketing",
+      source: "LinkedIn, Glassdoor",
+      asOf: "2026-03-31"
     },
     customerReviews: {
       summary: "4/5 stars on Capterra. Implementation teams praised as outstanding. Some historical customer service issues during Amalto acquisition period, now improved. Strong Gartner recognition.",
@@ -1317,7 +1331,9 @@ const competitors = [
       headcount: "~6,247 (Dec 2024)",
       headcountTrend: "Significant restructuring -- PE-driven cost cuts",
       openRoles: "N/A",
-      recentHires: "700+ laid off Jan 2026 post-Clearlake acquisition, all US business units affected up to SVP level"
+      recentHires: "700+ laid off Jan 2026 post-Clearlake acquisition, all US business units affected up to SVP level",
+      source: "LinkedIn, Glassdoor",
+      asOf: "2026-03-31"
     },
     customerReviews: {
       summary: "Trusted for data breadth but increasingly criticized for data staleness, high pricing, and complex contracts. Post-Clearlake layoffs raising concerns about future service quality.",
@@ -1372,6 +1388,7 @@ const competitors = [
 ];
 
 const changelog = [
+  { date: "2026-04-05", text: "HR Trends now display source attribution and 'as of' date for data freshness. Weekly automated updates scheduled to refresh headcount, open roles, and hiring trends from LinkedIn and Glassdoor.", source: "Feature: source/date metadata added; weekly CI refresh via scheduled agent" },
   { date: "2026-04-05", text: "Recent News section now pulls live headlines from Google News for each competitor. Articles are clickable links with source attribution. Static data is retained as fallback when the live feed is unavailable.", source: "Feature: Google News RSS integration via allorigins.win CORS proxy" },
   { date: "2026-03-31", text: "Added three new data sections to all competitor profiles: Recent News, HR Trends, and Customer Reviews. Threat badges removed from competitor cards; threat data retained for internal reference.", source: "Data refresh: News from Crunchbase, LinkedIn, G2, press releases; HR data from LinkedIn; Reviews from G2, Capterra, customer case studies" },
   { date: "2026-03-31", text: "Added key customer logos, partnerships, and latest funding data to all competitor profiles.", source: "Research: Bectran.com, HighRadius.com, TechCrunch, Crunchbase, PitchBook, G2, press releases" },
@@ -1588,6 +1605,7 @@ function openBattlecard(name) {
             <div class="hr-trend-value" style="font-size:12px;">${c.hrTrends.recentHires}</div>
           </div>
         </div>
+        ${c.hrTrends.asOf ? `<div style="font-size:10px; color:#b0b5bf; margin-top:10px; text-align:right;">Source: ${c.hrTrends.source || 'N/A'} &middot; As of ${c.hrTrends.asOf}</div>` : ''}
       </div>
     `;
   }
