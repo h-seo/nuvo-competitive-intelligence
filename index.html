@@ -506,11 +506,6 @@
     margin-top: 6px;
   }
 
-  .quick-ref-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
-  }
   .quick-ref-card {
     background: white;
     border-radius: 8px;
@@ -617,7 +612,6 @@
 <div class="nav">
   <button class="nav-btn active" onclick="showSection('landscape')">Landscape Overview</button>
   <button class="nav-btn" onclick="showSection('competitors')">Competitor Profiles</button>
-  <button class="nav-btn" onclick="showSection('battlecards')">Sales Battlecards</button>
   <button class="nav-btn" onclick="showSection('matrix')">Win/Loss Matrix</button>
   <button class="nav-btn" onclick="showSection('system')">Update System</button>
   <button class="nav-btn" onclick="showSection('changelog')">Change Log</button>
@@ -678,11 +672,6 @@
     <div class="competitor-grid" id="competitorGrid"></div>
   </div>
 
-  <!-- SALES BATTLECARDS -->
-  <div id="battlecards" class="section">
-    <p style="font-size:14px; color:#6b7280; margin-bottom:20px;">Click any competitor to open their full battlecard. Designed for quick reference mid-deal. Win/loss details are covered in the Win/Loss Matrix tab.</p>
-    <div class="quick-ref-grid" id="battlecardGrid"></div>
-  </div>
 
   <!-- WIN/LOSS MATRIX -->
   <div id="matrix" class="section">
@@ -1388,6 +1377,7 @@ const competitors = [
 ];
 
 const changelog = [
+  { date: "2026-04-08", text: "Sales Battlecards tab removed. Competitor detail view remains accessible by clicking any competitor card in the Competitor Profiles tab.", source: "Product decision: dashboard simplification" },
   { date: "2026-04-05", text: "HR Trends now display source attribution and 'as of' date for data freshness. Weekly automated updates scheduled to refresh headcount, open roles, and hiring trends from LinkedIn and Glassdoor.", source: "Feature: source/date metadata added; weekly CI refresh via scheduled agent" },
   { date: "2026-04-05", text: "Recent News section now pulls live headlines from Google News for each competitor. Articles are clickable links with source attribution. Static data is retained as fallback when the live feed is unavailable.", source: "Feature: Google News RSS integration via allorigins.win CORS proxy" },
   { date: "2026-03-31", text: "Added three new data sections to all competitor profiles: Recent News, HR Trends, and Customer Reviews. Threat badges removed from competitor cards; threat data retained for internal reference.", source: "Data refresh: News from Crunchbase, LinkedIn, G2, press releases; HR data from LinkedIn; Reviews from G2, Capterra, customer case studies" },
@@ -1458,23 +1448,6 @@ function renderCompetitors(filter, search) {
   `).join('');
 }
 
-function renderBattlecards() {
-  const grid = document.getElementById('battlecardGrid');
-  grid.innerHTML = competitors.filter(c => c.name !== 'Manual Processes (Status Quo)').map(c => `
-    <div class="quick-ref-card" style="cursor:pointer;" onclick="openBattlecard('${c.name}')">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <h4>${c.name}</h4>
-        ${getWinRateHTML(c.winRateVsNuvo)}
-      </div>
-      <div class="killer-line">${c.talkTrack[0]}</div>
-      <ul>
-        <li><strong>Watch For:</strong> ${c.landmines[0]}</li>
-        <li><strong>Key Customers:</strong> ${c.keyCustomers.slice(0, 3).join(', ')}</li>
-        <li><strong>Funding:</strong> ${c.latestFunding}</li>
-      </ul>
-    </div>
-  `).join('');
-}
 
 function renderMatrix() {
   const body = document.getElementById('matrixBody');
@@ -1744,7 +1717,6 @@ function filterCompetitors(search) {
 // ===================== INIT =====================
 document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 renderCompetitors();
-renderBattlecards();
 renderMatrix();
 renderChangelog();
 document.addEventListener('keydown', e => {
